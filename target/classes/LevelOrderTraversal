@@ -1,0 +1,30 @@
+private static void levelOrderTraversal(int numLevels, Board board, int xInitial, int yInitial, Player player) {
+
+    Queue<Vertex> previousLevelVertices = new LinkedList<Vertex>();
+    Queue<Vertex> currentLevelVertices = new LinkedList<Vertex>();
+
+    previousLevelVertices.add(board.getBoardState()[xInitial][yInitial]);
+    int currentLevel = 1;
+
+    while(currentLevel <= numLevels) {
+
+        while (!previousLevelVertices.isEmpty()) {
+
+            Vertex newSource = previousLevelVertices.poll();
+            currentLevelVertices.addAll(board.getVerticesReachableByKnight(newSource));
+
+        }
+
+        for (Vertex currentVertex : currentLevelVertices) {
+            if (player == Player.WHITE) {
+                currentVertex.addToWhiteMovesPossible(currentLevel);
+            } else {
+                currentVertex.addToBlackMovesPossible(currentLevel);
+            }
+        }
+
+        previousLevelVertices.addAll(currentLevelVertices);
+        currentLevelVertices.clear();
+        ++currentLevel;
+    }
+}
