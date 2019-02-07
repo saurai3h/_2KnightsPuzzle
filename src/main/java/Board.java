@@ -18,15 +18,14 @@ import java.util.List;
 class Board {
 
     static final int BOARD_SIZE = 8;
-    BigDecimal[][][][][] total;
+    BigDecimal[][][][][] lastMoveCollisions;
     BigDecimal[][][][][] collisionLess;
 
     Board(final int n) {
-        total = new BigDecimal[BOARD_SIZE][BOARD_SIZE][BOARD_SIZE][BOARD_SIZE][n+1];
+        lastMoveCollisions = new BigDecimal[BOARD_SIZE][BOARD_SIZE][BOARD_SIZE][BOARD_SIZE][n+1];
         collisionLess = new BigDecimal[BOARD_SIZE][BOARD_SIZE][BOARD_SIZE][BOARD_SIZE][n+1];
 
         collisionLess[0][0][BOARD_SIZE - 1][BOARD_SIZE - 1][0] = new BigDecimal(1);
-        total[0][0][BOARD_SIZE - 1][BOARD_SIZE - 1][0] = new BigDecimal(1);
     }
 
     List<Vertex> getVerticesReachableByKnight(final Vertex vertex) {
@@ -78,7 +77,24 @@ class Board {
             for (int j = 0; j < Board.BOARD_SIZE; ++j) {
                 for (int k = Board.BOARD_SIZE - 1; k >= 0; --k) {
                     for (int l = 0; l < Board.BOARD_SIZE; ++l) {
-                        System.out.print(total[i][j][k][l][totalMoves].subtract(collisionLess[i][j][k][l][totalMoves]));
+                        System.out.print(collisionLess[i][j][k][l][totalMoves]);
+                        System.out.print(",");
+                    }
+                    System.out.print(" ");
+                }
+                System.out.print("  ");
+            }
+            System.out.println();
+            System.out.println();
+        }
+
+        System.out.println();
+
+        for (int i = Board.BOARD_SIZE - 1; i >= 0; --i) {
+            for (int j = 0; j < Board.BOARD_SIZE; ++j) {
+                for (int k = Board.BOARD_SIZE - 1; k >= 0; --k) {
+                    for (int l = 0; l < Board.BOARD_SIZE; ++l) {
+                        System.out.print(lastMoveCollisions[i][j][k][l][totalMoves]);
                         System.out.print(",");
                     }
                     System.out.print(" ");

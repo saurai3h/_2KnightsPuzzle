@@ -17,7 +17,7 @@ public class Solver {
             simulateMoves(board, n);
 
             BigDecimal totalCollisionLess = new BigDecimal(0);
-            BigDecimal totalStates = new BigDecimal(0);
+            BigDecimal lastMoveCollisionStates = new BigDecimal(0);
 
             for (int i = 0; i < Board.BOARD_SIZE; ++i) {
                 for (int j = 0; j < Board.BOARD_SIZE; ++j) {
@@ -26,19 +26,21 @@ public class Solver {
 
                             if(board.collisionLess[i][j][k][l][n] == null)
                                 board.collisionLess[i][j][k][l][n] = new BigDecimal(0);
-                            if(board.total[i][j][k][l][n] == null)
-                                board.total[i][j][k][l][n] = new BigDecimal(0);
-
                             totalCollisionLess = totalCollisionLess.add(board.collisionLess[i][j][k][l][n]);
-                            totalStates = totalStates.add(board.total[i][j][k][l][n]);
+
+                            for(int m = 0 ; m <= n ; ++m) {
+                                if(board.lastMoveCollisions[i][j][k][l][m] == null)
+                                    board.lastMoveCollisions[i][j][k][l][m] = new BigDecimal(0);
+                                lastMoveCollisionStates = lastMoveCollisionStates.add(board.lastMoveCollisions[i][j][k][l][m]);
+                            }
                         }
                     }
                 }
             }
             System.out.println("For " + n + " moves");
             System.out.println("Collisionless paths : " + totalCollisionLess);
-            System.out.println("Total paths : " + totalStates);
-            System.out.println("Probability : " + totalCollisionLess.divide(totalStates, 8, BigDecimal.ROUND_HALF_UP));
+            System.out.println("Last Move Collision paths : " + lastMoveCollisionStates);
+            System.out.println("Probability : " + totalCollisionLess.divide(totalCollisionLess.add(lastMoveCollisionStates), 8, BigDecimal.ROUND_HALF_UP));
             System.out.println();
 
 //            board.print(n);
@@ -71,19 +73,15 @@ public class Solver {
 
                                         board.collisionLess[i][j][k][l][n] = board.collisionLess[i][j][k][l][n].add(board.collisionLess[previousWhiteVertex.x][previousWhiteVertex.y][previousBlackVertex.x][previousBlackVertex.y][n-1]);
                                     }
-                                    if(board.total[i][j][k][l][n] == null)
-                                        board.total[i][j][k][l][n] = new BigDecimal(0);
-
-                                    if(board.total[previousWhiteVertex.x][previousWhiteVertex.y][previousBlackVertex.x][previousBlackVertex.y][n-1] == null)
-                                        board.total[previousWhiteVertex.x][previousWhiteVertex.y][previousBlackVertex.x][previousBlackVertex.y][n-1] = new BigDecimal(0);
-
-                                    board.total[i][j][k][l][n] = board.total[i][j][k][l][n].add(board.total[previousWhiteVertex.x][previousWhiteVertex.y][previousBlackVertex.x][previousBlackVertex.y][n-1]);
                                 }
                             }
 
                             // black and white are on same position.
                             if(i == k && j == l) {
+                                board.lastMoveCollisions[i][j][k][l][n] = board.collisionLess[i][j][k][l][n];
                                 board.collisionLess[i][j][k][l][n] = new BigDecimal(0);
+                            } else {
+                                board.lastMoveCollisions[i][j][k][l][n] = new BigDecimal(0);
                             }
                         }
                     }
